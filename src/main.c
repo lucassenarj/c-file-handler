@@ -17,18 +17,21 @@ bool createPerson();
 void printPeople();
 bool saveFile();
 bool readFile();
+bool saveBinFile();
+bool readBinFile();
 
 int main(void)
 {
     int op;
     do {
-        printf("\n1 - Create Person \n2 - Print People List \n3 - Store in text file\n4 - Read from text file\n0 - Exit\n");
+        printf("\n1 - Create Person \n2 - Print People List \n3 - Store in text file\n4 - Read from text file\n");
+        printf("5 - Store in bin file\n6 - Read from bin file\n0 - Exit\n");
         scanf("%d", &op);
 
         switch (op)
         {
         case 0:
-            printf("Exiting...\n\n");
+            printf("\n\nExiting...\n\n");
             break;
         case 1:
             createPerson();
@@ -42,8 +45,14 @@ int main(void)
         case 4: 
             readFile();
             break;
+        case 5: 
+            saveBinFile();
+            break;
+        case 6: 
+            readBinFile();
+            break;
         default:
-            printf("Invalid option!\n\n");
+            printf("\n\nInvalid option!\n\n");
             break;
         }
     } while (op != 0);
@@ -136,7 +145,7 @@ bool readFile()
     }
 
     /*
-        store amount of person stored in file to global variable
+        read amount of person stored in file to global variable
         obs: we stored the variable with \n
         so we need to inform this when fetch from file
     */
@@ -161,5 +170,44 @@ bool readFile()
 
     // close file
     fclose(file);
+    return true;
+}
+
+bool saveBinFile()
+{
+    FILE *file = fopen("./files/people.bin", "wb");
+    if (file == NULL) {
+        printf("ERROR: Unable to open file");
+        return false;
+    }
+    // amount of person that will be stored
+    fprintf(file, "%d\n", amount);
+
+    // 
+    fwrite(people, sizeof(Person), amount, file);
+
+    // close file
+    fclose(file);
+
+    return true;
+}
+
+bool readBinFile()
+{
+    FILE *file = fopen("./files/people.bin", "rb");
+    if (file == NULL) {
+        printf("ERROR: Unable to open file");
+        return false;
+    }
+
+    // read amount of person stored on file
+    fscanf(file, "%d\n", &amount);
+
+    // read person from file
+    fread(people, sizeof(Person), amount, file);
+
+    // close file
+    fclose(file);
+
     return true;
 }
